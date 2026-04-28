@@ -31,7 +31,6 @@ ECM502_Sistema_Especialista/
 │
 ├── motor_generico.py                  # Motor de inferência (shell genérico)
 ├── shell_dengue_chikungunya_zika.yaml # Base de conhecimento do projeto
-
 ```
 
 ### Componentes
@@ -80,13 +79,13 @@ O processo repete até que nenhuma nova regra possa ser disparada.
 O motor garante **no máximo um diagnóstico por doença**: o mais específico (listado primeiro no YAML) é registrado e bloqueia automaticamente os de menor certeza para a mesma condição, evitando resultados redundantes.
 
 ### 4. Diagnósticos Possíveis
-O sistema é capaz de emitir **9 diagnósticos** em três níveis de certeza:
+O sistema é capaz de emitir **6 diagnósticos** em dois níveis de certeza:
 
-| Doença | Confirmado | Provável | Suspeita |
-|---|:---:|:---:|:---:|
-| Chikungunya | ✅ | ✅ | ✅ |
-| Dengue | ✅ | ✅ | ✅ |
-| Zika | ✅ | ✅ | ✅ |
+| Doença | Confirmado | Suspeita |
+|---|:---:|:---:|
+| Chikungunya | ✅ | ✅ |
+| Dengue | ✅ | ✅ |
+| Zika | ✅ | ✅ |
 
 ---
 
@@ -119,8 +118,6 @@ python -m pip install pyyaml
 ```bash
 python motor_generico.py
 ```
-
-> Por padrão, o motor carrega `shell_dengue_chikungunya_zika.yaml`. Para usar outro arquivo de regras, edite a última linha do `motor_generico.py`.
 
 ### Exemplo de sessão
 ```
@@ -165,7 +162,7 @@ regras:       # regras SE/ENTÃO para inferência
 
 ---
 
-## 📚 Referências
+## 📚 Referência
 
 - FIOCRUZ. *Zika, chikungunya e dengue: entenda as diferenças*. Disponível em: https://agencia.fiocruz.br/zika-chikungunya-e-dengue-entenda-diferencas
 

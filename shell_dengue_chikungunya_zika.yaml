@@ -18,36 +18,23 @@ perguntas:
   nausea:                  "O paciente apresenta náusea ou vômito?"
   sintomas_brandos:        "Os sintomas em geral são leves, podendo até passar despercebidos?"
 
-# Perguntas condicionais
 # depende_nao: só pergunta se a outra foi respondida com 'n'
 # depende_sim: só pergunta se a outra foi respondida com 's'
 dependencias:
-  # Febre: se há febre alta, não pergunta sobre febre baixa
   febre_baixa:
     depende_nao: febre_alta
-
-  # Articulação: se dor intensa, não pergunta sobre dor leve
   dor_articulacao_leve:
     depende_nao: dor_articulacao_intensa
-
-  # Edema: só faz sentido se há dor intensa
   edema_articulacoes:
     depende_sim: dor_articulacao_intensa
-
-  # Rash: timing e coceira só aparecem se há manchas
   rash_primeiras_24h:
     depende_sim: rash_cutaneo
-
   rash_apos_48h:
     depende_nao: rash_primeiras_24h
-
   prurido_intenso:
     depende_sim: rash_cutaneo
-
   prurido_leve:
     depende_nao: prurido_intenso
-
-  # Sintomas brandos: só faz sentido se não há febre alta
   sintomas_brandos:
     depende_nao: febre_alta
 
@@ -80,20 +67,14 @@ regras:
   - se: [padrao_febre_alta, artralgia_grave]
     entao: chik_base
 
-  - se: [chik_base, rash_apos_48h]
-    entao: chik_com_rash
-
-  - se: [chik_com_rash, conjuntivite_presente]
+  - se: [chik_base, rash_apos_48h, conjuntivite_presente]
     entao: chik_confirmado
 
   - se: [chik_confirmado]
     entao: "Diagnóstico: CHIKUNGUNYA (confirmado) — Febre alta, artralgia intensa com edema, manchas surgidas após 48h e olhos vermelhos. Dores nas articulações podem persistir por meses. Procure atendimento médico urgente."
 
-  - se: [chik_com_rash]
-    entao: "Diagnóstico: CHIKUNGUNYA (provável) — Febre alta, artralgia intensa com edema e manchas surgidas após 48h são fortemente indicativos. Confirme com exame laboratorial."
-
   - se: [chik_base]
-    entao: "Diagnóstico: CHIKUNGUNYA (suspeita) — Febre alta e artralgia grave com edema são o principal marcador da doença. Avaliação médica urgente recomendada."
+    entao: "Diagnóstico: CHIKUNGUNYA (suspeita) — Febre alta e artralgia grave com edema são os principais marcadores da doença. Avaliação médica urgente recomendada."
 
   # Dengue
 
@@ -101,33 +82,30 @@ regras:
     entao: dengue_base
 
   - se: [dengue_base, rash_leve]
-    entao: dengue_com_rash
+    entao: dengue_confirmado
 
-  - se: [dengue_com_rash]
+  - se: [dengue_confirmado]
     entao: "Diagnóstico: DENGUE (confirmado) — Febre alta, dor nos olhos, artralgia moderada e manchas leves na pele. Atenção a sinais de alarme como vômitos e dor abdominal intensa. Procure atendimento médico."
 
   - se: [dengue_base]
-    entao: "Diagnóstico: DENGUE (provável) — Febre alta, dor retro-orbitária e artralgia moderada são indicativos. Hidratação e acompanhamento médico são essenciais."
+    entao: "Diagnóstico: DENGUE (suspeita) — Febre alta, dor retro-orbitária e artralgia moderada são indicativos. Hidratação e acompanhamento médico recomendados."
 
   - se: [padrao_febre_alta, cefaleia, nausea]
-    entao: "Diagnóstico: DENGUE (suspeita) — Febre alta associada a cefaleia intensa e náusea são sintomas comuns. Monitoramento e hidratação recomendados."
+    entao: "Diagnóstico: DENGUE (suspeita) — Febre alta associada a cefaleia e náusea são sintomas comuns. Monitoramento e hidratação recomendados."
 
-  # Zika
+  # Zika 
 
   - se: [rash_primeiras_24h, prurido_intenso]
     entao: zika_rash_precoce
 
-  - se: [zika_rash_precoce, padrao_febre_baixa]
-    entao: zika_base
-
-  - se: [zika_base, conjuntivite_presente]
+  - se: [zika_rash_precoce, padrao_febre_baixa, conjuntivite_presente]
     entao: zika_confirmado
 
   - se: [zika_confirmado]
     entao: "Diagnóstico: ZIKA (confirmado) — Febre baixa, rash nas primeiras 24h com coceira intensa e olhos vermelhos são marcadores típicos. Gestantes devem buscar atendimento imediatamente pelo risco de microcefalia."
 
-  - se: [zika_base]
-    entao: "Diagnóstico: ZIKA (provável) — Febre baixa, manchas com coceira intensa surgidas nas primeiras 24h são característicos do Zika. Consulta médica recomendada."
+  - se: [zika_rash_precoce, padrao_febre_baixa]
+    entao: "Diagnóstico: ZIKA (suspeita) — Febre baixa com rash precoce e coceira intensa são indicativos. Consulta médica recomendada. Gestantes devem buscar atendimento."
 
   - se: [zika_rash_precoce, sintomas_brandos]
     entao: "Diagnóstico: ZIKA (suspeita) — Sintomas brandos com rash cutâneo precoce e coceira intensa são indicativos. Mesmo sem sintomas graves, gestantes devem buscar atendimento."
