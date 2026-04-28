@@ -1,0 +1,114 @@
+# Sistema Especialista: Diagnóstico de Dengue, Chikungunya e Zika
+# Fonte: Fiocruz - https://agencia.fiocruz.br/zika-chikungunya-e-dengue-entenda-diferencas
+perguntas:
+  febre_alta: "O paciente apresenta febre alta (acima de 39°C) de início súbito?"
+  febre_baixa: "O paciente apresenta febre baixa (abaixo de 38°C) ou ausência de febre?"
+  dor_articulacao_intensa: "O paciente apresenta dores INTENSAS nas articulações (mãos, pés, tornozelos, pulsos)?"
+  dor_articulacao_leve: "O paciente apresenta dores leves a moderadas nas articulações?"
+  rash_cutaneo: "O paciente apresenta manchas vermelhas na pele (rash cutâneo / exantema)?"
+  rash_primeiras_24h: "As manchas na pele surgiram nas primeiras 24 horas dos sintomas?"
+  rash_apos_48h: "As manchas na pele surgiram após 48 horas do início dos sintomas?"
+  prurido_intenso: "O paciente sente coceira intensa (prurido) nas manchas da pele?"
+  prurido_leve: "O paciente sente coceira leve ou moderada nas manchas?"
+  olhos_vermelhos: "O paciente apresenta olhos vermelhos (conjuntivite sem secreção)?"
+  dor_nos_olhos: "O paciente sente dor nos olhos (dor retro-orbitária)?"
+  dor_cabeca: "O paciente apresenta dor de cabeça intensa?"
+  edema_articulacoes: "Há inchaço (edema) ou rigidez nas articulações?"
+  sintomas_brandos: "Os sintomas em geral são leves, podendo até passar despercebidos?"
+  cefaleia: "O paciente apresenta dor de cabeça (cefaleia)?"
+  nausea: "O paciente apresenta náusea ou vômito?"
+
+regras:
+  #Inferências intermediárias
+
+  # Padrão de febre característico de cada doença
+  - se: [febre_alta]
+    entao: padrao_febre_dengue_ou_chik
+
+  - se: [febre_baixa]
+    entao: padrao_febre_zika
+
+  # Padrão articular
+  - se: [dor_articulacao_intensa, edema_articulacoes]
+    entao: artralgia_grave
+
+  - se: [dor_articulacao_leve]
+    entao: artralgia_leve_moderada
+
+  # Padrão cutâneo
+  - se: [rash_cutaneo, rash_primeiras_24h, prurido_intenso]
+    entao: rash_caracteristico_zika
+
+  - se: [rash_cutaneo, rash_apos_48h]
+    entao: rash_caracteristico_chik
+
+  - se: [rash_cutaneo, prurido_leve]
+    entao: rash_leve_dengue
+
+  # Padrão ocular
+  - se: [olhos_vermelhos]
+    entao: conjuntivite_presente
+
+  - se: [dor_nos_olhos]
+    entao: dor_ocular_presente
+
+  # Agrupamentos de sinais sugestivos
+
+  # Sinais sugestivos de Chikungunya
+  - se: [padrao_febre_dengue_ou_chik, artralgia_grave]
+    entao: sinal_chikungunya_forte
+
+  - se: [sinal_chikungunya_forte, rash_caracteristico_chik]
+    entao: sinal_chikungunya_muito_forte
+
+  - se: [sinal_chikungunya_forte, conjuntivite_presente]
+    entao: sinal_chikungunya_confirmado
+
+  # Sinais sugestivos de Dengue
+  - se: [padrao_febre_dengue_ou_chik, artralgia_leve_moderada, dor_ocular_presente]
+    entao: sinal_dengue_forte
+
+  - se: [padrao_febre_dengue_ou_chik, nausea, cefaleia]
+    entao: sinal_dengue_moderado
+
+  - se: [sinal_dengue_forte, rash_leve_dengue]
+    entao: sinal_dengue_confirmado
+
+  # Sinais sugestivos de Zika
+  - se: [rash_caracteristico_zika, padrao_febre_zika]
+    entao: sinal_zika_forte
+
+  - se: [sinal_zika_forte, conjuntivite_presente]
+    entao: sinal_zika_confirmado
+
+  - se: [sintomas_brandos, rash_caracteristico_zika]
+    entao: sinal_zika_leve
+
+  # Diagnósticos finais
+
+  - se: [sinal_chikungunya_confirmado]
+    entao: "Diagnóstico: CHIKUNGUNYA — Febre alta, artralgia intensa com edema, manchas surgidas após 48h e olhos vermelhos. Dores nas articulações podem persistir por meses. Procure atendimento médico."
+
+  - se: [sinal_chikungunya_muito_forte]
+    entao: "Diagnóstico: CHIKUNGUNYA (provável) — Febre alta com dores articulares intensas e rash cutâneo tardio são fortemente indicativos. Confirme com exame laboratorial."
+
+  - se: [sinal_chikungunya_forte]
+    entao: "Diagnóstico: CHIKUNGUNYA (suspeita) — Febre alta e artralgia grave são o principal marcador da doença. Avaliação médica urgente recomendada."
+
+  - se: [sinal_dengue_confirmado]
+    entao: "Diagnóstico: DENGUE — Febre alta de início súbito, dores moderadas, dor nos olhos e manchas leves na pele. Atenção a sinais de alarme (vômitos, dor abdominal intensa). Procure atendimento médico."
+
+  - se: [sinal_dengue_forte]
+    entao: "Diagnóstico: DENGUE (provável) — Febre alta, dor retro-orbitária e artralgia moderada são indicativos. Hidratação e acompanhamento médico são essenciais."
+
+  - se: [sinal_dengue_moderado]
+    entao: "Diagnóstico: DENGUE (suspeita) — Febre alta associada a náusea e cefaleia intensa são sintomas comuns. Monitoramento recomendado."
+
+  - se: [sinal_zika_confirmado]
+    entao: "Diagnóstico: ZIKA — Rash cutâneo com coceira intensa nas primeiras 24h, febre baixa e olhos vermelhos são marcadores típicos. Gestantes devem buscar atendimento imediatamente pelo risco de microcefalia."
+
+  - se: [sinal_zika_forte]
+    entao: "Diagnóstico: ZIKA (provável) — Manchas com coceira intensa surgidas rapidamente e febre baixa são característicos do Zika. Consulta médica recomendada."
+
+  - se: [sinal_zika_leve]
+    entao: "Diagnóstico: ZIKA (suspeita leve) — Sintomas brandos com rash cutâneo precoce e intenso são indicativos. Mesmo sem sintomas graves, gestantes devem buscar atendimento."
